@@ -1,29 +1,50 @@
-const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera(
-	75,
-	window.innerWidth / window.innerHeight,
-	0.1,
-	1000
-)
+var scene, camera, renderer
 
-const renderer = new THREE.WebGLRenderer()
-renderer.setSize(window.innerWidth, window.innerHeight)
-document.body.appendChild(renderer.domElement)
+var WIDTH = window.innerWidth
+var HEIGHT = window.innerHeight
 
-const geometry = new THREE.BoxGeometry()
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-const cube = new THREE.Mesh(geometry, material)
-scene.add(cube)
+var SPEED = 0.01
 
-camera.position.z = 5
+function init() {
+	scene = new THREE.Scene()
 
-const animate = function () {
-	requestAnimationFrame(animate)
+	initCube()
+	initCamera()
+	initRenderer()
 
-	cube.rotation.x += 0.01
-	cube.rotation.y += 0.01
+	document.body.appendChild(renderer.domElement)
+}
 
+function initCamera() {
+	camera = new THREE.PerspectiveCamera(70, WIDTH / HEIGHT, 1, 10)
+	camera.position.set(0, 3.5, 5)
+	camera.lookAt(scene.position)
+}
+
+function initRenderer() {
+	renderer = new THREE.WebGLRenderer({ antialias: true })
+	renderer.setSize(WIDTH, HEIGHT)
+}
+
+function initCube() {
+	cube = new THREE.Mesh(
+		new THREE.CubeGeometry(1, 1, 1),
+		new THREE.MeshNormalMaterial()
+	)
+	scene.add(cube)
+}
+
+function rotateCube() {
+	cube.rotation.x -= SPEED * 2
+	cube.rotation.y -= SPEED
+	cube.rotation.z -= SPEED * 3
+}
+
+function render() {
+	requestAnimationFrame(render)
+	rotateCube()
 	renderer.render(scene, camera)
 }
 
-animate()
+init()
+render()
